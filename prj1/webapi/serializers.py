@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models import Club, Member, Interest
 
-class ClubSerializer(serializers.HyperlinkedModelSerializer):
+class ClubSerializer(serializers.ModelSerializer):
     def create(self, data):
         return Club.objects.create(**data)
 
@@ -10,7 +10,7 @@ class ClubSerializer(serializers.HyperlinkedModelSerializer):
         model = Club
         fields = ('id', 'name', 'email')
 
-class ClubInstanceSerializer(serializers.HyperlinkedModelSerializer):
+class ClubInstanceSerializer(serializers.ModelSerializer):
 
     def update(self, instance, data):
         instance.name = data.get('name', instance.name)
@@ -23,14 +23,16 @@ class ClubInstanceSerializer(serializers.HyperlinkedModelSerializer):
         model = Club
         fields = ('id', 'name', 'email')
 
-class MemberSerializer(serializers.HyperlinkedModelSerializer):
-    club_id = serializers.PrimaryKeyRelatedField(source='club', read_only='true')
+class MemberSerializer(serializers.ModelSerializer):
+
+    def create(self, data):
+        return Member.objects.create(**data)
 
     class Meta:
         model = Member
-        fields = ('id', 'first', 'last', 'email', 'club_id')
+        fields = ('id', 'first', 'last', 'email', 'club')
 
-class InterestSerializer(serializers.HyperlinkedModelSerializer):
+class InterestSerializer(serializers.ModelSerializer):
     member_id = serializers.PrimaryKeyRelatedField(source='member', read_only='true')
 
     class Meta:

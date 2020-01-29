@@ -1,9 +1,10 @@
 from django.urls import path
 
-from .views import ClubView, ClubInstanceView, MemberView
+from .views import ClubView, ClubInstanceView, MemberView, MemberInstanceView
 
 urlpatterns = [
     path('clubs', ClubView.as_view()),
     path('clubs/<int:pk>', ClubInstanceView.as_view()),
-    path('clubs/<int:pk>/members', MemberView.as_view())
+    path('clubs/<int:pk>/members', MemberView.as_view()),
+    path('clubs/<int:pk>/members/<int:pk2>', MemberInstanceView.as_view())
 ]

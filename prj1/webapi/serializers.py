@@ -32,6 +32,20 @@ class MemberSerializer(serializers.ModelSerializer):
         model = Member
         fields = ('id', 'first', 'last', 'email', 'club')
 
+class MemberInstanceSerializer(serializers.ModelSerializer):
+
+    def update(self, instance, data):
+        instance.first = data.get('first', instance.first)
+        instance.last = data.get('last', instance.last)
+        instance.email = data.get('email', instance.email)
+
+        instance.save()
+        return instance
+
+    class Meta:
+        model = Member
+        fields = ('id', 'first', 'last', 'email', 'club')
+
 class InterestSerializer(serializers.ModelSerializer):
     member_id = serializers.PrimaryKeyRelatedField(source='member', read_only='true')
 

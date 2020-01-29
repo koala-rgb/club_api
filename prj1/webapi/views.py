@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory
 
-from .serializers import ClubSerializer, ClubInstanceSerializer, MemberSerializer, InterestSerializer
+from .serializers import ClubSerializer, ClubInstanceSerializer, MemberSerializer, MemberInstanceSerializer, InterestSerializer
 from .models import Club, Member, Interest
 
 import json
@@ -79,4 +79,32 @@ class MemberView(APIView):
         if serialize.is_valid(raise_exception=True):
             save = serialize.save()
 
-        return Response({"Operation Successful": f"Member '{save.first}' has been added"})
+        return Response({"Operation Successful": f"Member '{save.first} {save.last}' has been added"})
+
+class MemberInstanceView(APIView):
+
+    def get(self, request, pk, pk2):
+
+        member = Member.objects.filter(id = pk2)
+        serialize = MemberInstanceSerializer(member, many=True)
+
+        return Response(serialize.data)
+
+    def put(self, request, pk, pk2):
+
+        member = Member.objects.get(pk=pk2)
+        data = request.data.get('member')
+        serialize = MemberInstanceSerializer(instance = member, data=data, partial=True)
+
+        if(serialize.is_valid(raise_exception=True)):
+            member = serialize.save()
+
+        return Response({"Operation Successful": f"Member '{member.first} {member.last}' has been updated"})
+
+    def delete(self, request, pk, pk2):
+
+        member = Member.objects.get(pk=pk2)
+        member_name = member.first + " " + member.last
+        member.delete()
+
+        return Response({"Operation Successful": f"Member '{member_name}' has been deleted"})

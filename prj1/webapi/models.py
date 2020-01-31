@@ -18,6 +18,9 @@ class Member(models.Model):
     def __str__(self):
         return self.first + " " + self.last
 
+    def addInterest(self):
+        interest = models.ForeignKey(Interest, on_delete=models.CASCADE)
+
 class Interest(models.Model):
     name = models.CharField(max_length=40, default=' ')
     member = models.ForeignKey(Member, on_delete=models.CASCADE)

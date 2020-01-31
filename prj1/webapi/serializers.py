@@ -47,8 +47,10 @@ class MemberInstanceSerializer(serializers.ModelSerializer):
         fields = ('id', 'first', 'last', 'email', 'club')
 
 class InterestSerializer(serializers.ModelSerializer):
-    member_id = serializers.PrimaryKeyRelatedField(source='member', read_only='true')
+
+    def create(self, data):
+        return Interest.objects.create(**data)
 
     class Meta:
         model = Interest
-        fields = ('id', 'member_id', 'name')
+        fields = ('id', 'member', 'name')

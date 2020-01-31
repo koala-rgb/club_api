@@ -108,3 +108,25 @@ class MemberInstanceView(APIView):
         member.delete()
 
         return Response({"Operation Successful": f"Member '{member_name}' has been deleted"})
+
+class InterestView(APIView):
+
+    def get(self, request, pk, pk2):
+
+        interest = Interest.objects.filter(member = Member.objects.get(pk=pk2))
+        serialize = InterestSerializer(interest, many=True)
+
+        return Response(serialize.data)
+
+    def post(self, request, pk, pk2):
+
+        interest = request.data.get('interest')
+        interest['member'] = pk2
+
+        serialize = InterestSerializer(data=interest)
+
+        if serialize.is_valid(raise_exception=True):
+            save = serialize.save()
+            member = Member.objects.get(pk=pk2)
+
+        return Response({"Operation Successful": f"{save.name} has been added to '{member.first} {member.last}'s interests"})

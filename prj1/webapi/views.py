@@ -3,7 +3,7 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.test import APIRequestFactory
 
-from .serializers import ClubSerializer, ClubInstanceSerializer, MemberSerializer, MemberInstanceSerializer, InterestSerializer
+from .serializers import ClubSerializer, ClubInstanceSerializer, MemberSerializer, MemberInstanceSerializer, InterestSerializer, InterestInstanceSerializer
 from .models import Club, Member, Interest
 
 import json
@@ -20,7 +20,7 @@ class ClubView(APIView):
 
     def post(self, request):
 
-        club = request.data.get('club')
+        club = request.data
         serialize = ClubSerializer(data=club)
 
         if serialize.is_valid(raise_exception=True):
@@ -44,7 +44,7 @@ class ClubInstanceView(APIView):
     def put(self, request, pk):
 
         club = Club.objects.get(pk=pk)
-        data = request.data.get('club')
+        data = request.data
         serialize = ClubInstanceSerializer(instance = club, data=data, partial=True)
 
         if(serialize.is_valid(raise_exception=True)):
@@ -71,7 +71,7 @@ class MemberView(APIView):
 
     def post(self, request, pk):
 
-        member = request.data.get('member')
+        member = request.data
         member['club'] = pk
 
         serialize = MemberSerializer(data=member)
@@ -85,15 +85,25 @@ class MemberInstanceView(APIView):
 
     def get(self, request, pk, pk2):
 
-        member = Member.objects.filter(id = pk2)
-        serialize = MemberInstanceSerializer(member, many=True)
+        member = Member.objects.get(id = pk2)
+        member.club = Club.objects.get(pk=pk)
 
-        return Response(serialize.data)
+        interest = Interest.objects.filter(member = Member.objects.get(pk=pk2))
+
+        serialize_member = MemberInstanceSerializer(member)
+        serialize_interest = InterestSerializer(interest, many=True)
+
+        serialized_m = {'member': serialize_member.data}
+        serialized_i = {'interests': serialize_interest.data}
+
+        sergroup = serialized_m, serialized_i
+
+        return Response(sergroup)
 
     def put(self, request, pk, pk2):
 
         member = Member.objects.get(pk=pk2)
-        data = request.data.get('member')
+        data = request.data
         serialize = MemberInstanceSerializer(instance = member, data=data, partial=True)
 
         if(serialize.is_valid(raise_exception=True)):
@@ -120,7 +130,7 @@ class InterestView(APIView):
 
     def post(self, request, pk, pk2):
 
-        interest = request.data.get('interest')
+        interest = request.data
         interest['member'] = pk2
 
         serialize = InterestSerializer(data=interest)
@@ -130,3 +140,21 @@ class InterestView(APIView):
             member = Member.objects.get(pk=pk2)
 
         return Response({"Operation Successful": f"{save.name} has been added to '{member.first} {member.last}'s interests"})
+
+class InterestInstanceView(APIView):
+
+    def get(self, request, pk, pk2, pk3):
+
+        interest = Interest.objects.get(pk=pk3)
+        interest.member = Member.objects.get(pk=pk2)
+        serialize = InterestInstanceSerializer(interest)
+
+        return Response(serialize.data)
+
+    def delete(self, request, pk, pk2, pk3):
+
+        interest = Interest.objects.get(pk=pk3)
+        interest_name = interest.name
+        interest.delete()
+
+        return Response({"Operation Successful": f"The interest '{interest_name}' has been deleted"})

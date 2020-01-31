@@ -54,3 +54,9 @@ class InterestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interest
         fields = ('id', 'member', 'name')
+
+class InterestInstanceSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Interest
+        fields = ('id', 'member', 'name')

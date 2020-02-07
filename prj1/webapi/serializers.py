@@ -32,7 +32,17 @@ class MemberSerializer(serializers.ModelSerializer):
         model = Member
         fields = ('id', 'first', 'last', 'email', 'club')
 
+class InterestSerializer(serializers.ModelSerializer):
+
+    def create(self, data):
+        return Interest.objects.create(**data)
+
+    class Meta:
+        model = Interest
+        fields = ('id', 'member', 'name')
+
 class MemberInstanceSerializer(serializers.ModelSerializer):
+    interest = InterestSerializer(many=True, read_only=True)
 
     def update(self, instance, data):
         instance.first = data.get('first', instance.first)
@@ -44,16 +54,7 @@ class MemberInstanceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Member
-        fields = ('id', 'first', 'last', 'email', 'club')
-
-class InterestSerializer(serializers.ModelSerializer):
-
-    def create(self, data):
-        return Interest.objects.create(**data)
-
-    class Meta:
-        model = Interest
-        fields = ('id', 'member', 'name')
+        fields = ('id', 'first', 'last', 'email', 'club', 'interest')
 
 class InterestInstanceSerializer(serializers.ModelSerializer):
 

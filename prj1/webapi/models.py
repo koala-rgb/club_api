@@ -20,7 +20,7 @@ class Member(models.Model):
 
 class Interest(models.Model):
     name = models.CharField(max_length=40)
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    member = models.ForeignKey(Member, related_name="interest", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

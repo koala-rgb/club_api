@@ -4,9 +4,9 @@ from .views import ClubView, ClubInstanceView, MemberView, MemberInstanceView, I
 
 urlpatterns = [
     path('clubs', ClubView.as_view()),
-    path('clubs/<int:pk>', ClubInstanceView.as_view()),
-    path('clubs/<int:pk>/members', MemberView.as_view()),
-    path('clubs/<int:pk>/members/<int:pk2>', MemberInstanceView.as_view()),
-    path('clubs/<int:pk>/members/<int:pk2>/interests', InterestView.as_view()),
-    path('clubs/<int:pk>/members/<int:pk2>/interests/<int:pk3>', InterestInstanceView.as_view())
+    path('clubs/<int:club_id>', ClubInstanceView.as_view()),
+    path('clubs/<int:club_id>/members', MemberView.as_view()),
+    path('clubs/<int:club_id>/members/<int:member_id>', MemberInstanceView.as_view()),
+    path('clubs/<int:club_id>/members/<int:member_id>/interests', InterestView.as_view()),
+    path('clubs/<int:club_id>/members/<int:member_id>/interests/<int:interest_id>', InterestInstanceView.as_view())
 ]

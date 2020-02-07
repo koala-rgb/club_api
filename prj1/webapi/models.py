@@ -10,20 +10,17 @@ class Club(models.Model):
         return self.name
 
 class Member(models.Model):
-    first = models.CharField(max_length=20, default = ' ')
-    last = models.CharField(max_length=20, default=' ')
-    email = models.EmailField(max_length=50, default=' ')
+    first = models.CharField(max_length=20)
+    last = models.CharField(max_length=20)
+    email = models.EmailField(max_length=50)
     club = models.ForeignKey(Club, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.first + " " + self.last
 
-    def addInterest(self):
-        interest = models.ForeignKey(Interest, on_delete=models.CASCADE)
-
 class Interest(models.Model):
-    name = models.CharField(max_length=40, default=' ')
-    member = models.ForeignKey(Member, on_delete=models.CASCADE)
+    name = models.CharField(max_length=40)
+    member = models.ForeignKey(Member, related_name="interest", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
